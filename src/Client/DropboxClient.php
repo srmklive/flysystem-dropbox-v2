@@ -4,6 +4,7 @@ namespace Srmklive\Dropbox\Client;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException as HttpClientException;
+use GuzzleHttp\Psr7\StreamWrapper;
 use Illuminate\Support\Collection;
 use Srmklive\Dropbox\Exceptions\BadRequest;
 
@@ -50,6 +51,15 @@ class DropboxClient
     protected $apiEndpoint;
 
     /**
+     * Check whether the current API request has any upload content.
+     *
+     * @var bool
+     */
+    protected $apiHasContent;
+
+    protected $content;
+
+    /**
      * Collection containing Dropbox API request data.
      *
      * @var \Illuminate\Support\Collection
@@ -86,12 +96,16 @@ class DropboxClient
     }
 
     /**
-     * Copy content from one location to another.
+     * Copy a file or folder to a different location in the user's Dropbox.
+     *
+     * If the source path is a folder all its contents will be copied.
      *
      * @param string $fromPath
      * @param string $toPath
      *
      * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-copy
      */
     public function copy($fromPath, $toPath)
     {
@@ -103,6 +117,76 @@ class DropboxClient
         $this->apiEndpoint = 'files/copy';
 
         return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Create a folder at a given path.
+     *
+     * @param string $path
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-create_folder
+     */
+    public function createFolder($path)
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+        ]);
+
+        $this->apiEndpoint = 'files/create_folder';
+
+        $response = $this->doDropboxApiRequest();
+        $response['.tag'] = 'folder';
+
+        return $response;
+    }
+
+    /**
+     * Delete the file or folder at a given path.
+     *
+     * If the path is a folder, all its contents will be deleted too.
+     * A successful response indicates that the file or folder was deleted.
+     *
+     * @param string $path
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-delete
+     */
+    public function delete($path)
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+        ]);
+
+        $this->apiEndpoint = 'files/delete';
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Download a file from a user's Dropbox.
+     *
+     * @param string $path
+     *
+     * @return resource
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-download
+     */
+    public function download($path)
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+        ]);
+
+        $this->apiEndpoint = 'files/download';
+        $this->apiHasContent = true;
+
+        $response = $this->doDropboxApiRequest();
+        $this->apiHasContent = false;
+
+        return StreamWrapper::getResource($response->getBody());
     }
 
     /**
@@ -118,34 +202,39 @@ class DropboxClient
     /**
      * Perform Dropbox API request.
      *
-     * @param bool $upload
-     *
      * @return \Psr\Http\Message\ResponseInterface
      *
      * @throws \Exception
      */
-    protected function doDropboxApiRequest($upload = false)
+    protected function doDropboxApiRequest()
     {
-        $headers['Dropbox-API-Arg'] = json_encode(
-            $this->request->toArray()
-        );
-
-        if ($body !== '') {
+        if ($this->apiHasContent) {
+            $headers['Dropbox-API-Arg'] = json_encode(
+                $this->request->toArray()
+            );
             $headers['Content-Type'] = 'application/octet-stream';
+
+            $post = [
+                'headers' => $headers,
+                'body' => $this->content,
+            ];
+
+            $postUrl = "{$this->apiContentUrl}.{$this->apiEndpoint}";
+        } else {
+            $post = [
+                'json' => $this->request->toArray()
+            ];
+
+            $postUrl = "{$this->apiUrl}.{$this->apiEndpoint}";
         }
 
-        $postUrl = ($upload === true) ? "{$this->apiContentUrl}.{$this->apiEndpoint}" :
-            "{$this->apiUrl}.{$this->apiEndpoint}";
-
         try {
-            $response = $this->client->post($postUrl, [
-                'headers' => $headers,
-                'body' => '',
-            ]);
+            $response = $this->client->post($postUrl, $post);
         } catch (HttpClientException $exception) {
             throw $this->determineException($exception);
         }
-        return $response;
+
+        return ($this->apiHasContent) ? $response  : \GuzzleHttp\json_decode($response->getBody(), true);
     }
 
     /**
