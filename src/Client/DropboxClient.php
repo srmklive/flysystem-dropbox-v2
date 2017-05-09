@@ -51,12 +51,8 @@ class DropboxClient
     protected $apiEndpoint;
 
     /**
-     * Check whether the current API request has any upload content.
-     *
-     * @var bool
+     * @var mixed
      */
-    protected $apiHasContent;
-
     protected $content;
 
     /**
@@ -181,10 +177,8 @@ class DropboxClient
         ]);
 
         $this->apiEndpoint = 'files/download';
-        $this->apiHasContent = true;
 
-        $response = $this->doDropboxApiRequest();
-        $this->apiHasContent = false;
+        $response = $this->doDropboxApiContentRequest();
 
         return StreamWrapper::getResource($response->getBody());
     }
@@ -208,33 +202,41 @@ class DropboxClient
      */
     protected function doDropboxApiRequest()
     {
-        if ($this->apiHasContent) {
-            $headers['Dropbox-API-Arg'] = json_encode(
-                $this->request->toArray()
-            );
-            $headers['Content-Type'] = 'application/octet-stream';
-
-            $post = [
-                'headers' => $headers,
-                'body' => $this->content,
-            ];
-
-            $postUrl = "{$this->apiContentUrl}.{$this->apiEndpoint}";
-        } else {
-            $post = [
-                'json' => $this->request->toArray()
-            ];
-
-            $postUrl = "{$this->apiUrl}.{$this->apiEndpoint}";
-        }
-
         try {
-            $response = $this->client->post($postUrl, $post);
+            $response = $this->client->post("{$this->apiUrl}.{$this->apiEndpoint}", [
+                'json' => $this->request->toArray()
+            ]);
         } catch (HttpClientException $exception) {
             throw $this->determineException($exception);
         }
 
-        return ($this->apiHasContent) ? $response  : \GuzzleHttp\json_decode($response->getBody(), true);
+        return \GuzzleHttp\json_decode($response->getBody(), true);
+    }
+
+    /**
+     * Perform Dropbox API request.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @throws \Exception
+     */
+    protected function doDropboxApiContentRequest()
+    {
+        try {
+            $response = $this->client->post("{$this->apiContentUrl}.{$this->apiEndpoint}", [
+                'headers' => [
+                    'Dropbox-API-Arg' => json_encode(
+                        $this->request->toArray()
+                    ),
+                    'Content-Type' => 'application/octet-stream'
+                ],
+                'body' => !empty($this->content) ? $this->content : '',
+            ]);
+        } catch (HttpClientException $exception) {
+            throw $this->determineException($exception);
+        }
+
+        return $response;
     }
 
     /**
