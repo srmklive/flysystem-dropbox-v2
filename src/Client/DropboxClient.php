@@ -184,6 +184,188 @@ class DropboxClient
     }
 
     /**
+     * Returns the metadata for a file or folder.
+     *
+     * Note: Metadata for the root folder is unsupported.
+     *
+     * @param string $path
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-get_metadata
+     */
+    public function getMetaData($path)
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+        ]);
+
+        $this->apiEndpoint = 'files/get_metadata';
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Get a temporary link to stream content of a file.
+     *
+     * This link will expire in four hours and afterwards you will get 410 Gone.
+     * Content-Type of the link is determined automatically by the file's mime type.
+     *
+     * @param string $path
+     *
+     * @return string
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-get_temporary_link
+     */
+    public function getTemporaryLink($path)
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+        ]);
+
+        $this->apiEndpoint = 'files/get_temporary_link';
+
+        $response = $this->doDropboxApiRequest();
+
+        return $response['link'];
+    }
+
+    /**
+     * Get a thumbnail for an image.
+     *
+     * This method currently supports files with the following file extensions:
+     * jpg, jpeg, png, tiff, tif, gif and bmp.
+     *
+     * Photos that are larger than 20MB in size won't be converted to a thumbnail.
+     *
+     * @param string $path
+     * @param string $format
+     * @param string $size
+     *
+     * @return string
+     */
+    public function getThumbnail($path, $format = 'jpeg', $size = 'w64h64')
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+            'format' => $format,
+            'size' => $size,
+        ]);
+
+        $this->apiEndpoint = 'files/get_thumbnail';
+
+        $response = $this->doDropboxApiContentRequest();
+
+        return (string) $response->getBody();
+    }
+
+    /**
+     * Starts returning the contents of a folder.
+     *
+     * If the result's ListFolderResult.has_more field is true, call
+     * list_folder/continue with the returned ListFolderResult.cursor to retrieve more entries.
+     *
+     * Note: auth.RateLimitError may be returned if multiple list_folder or list_folder/continue calls
+     * with same parameters are made simultaneously by same API app for same user. If your app implements
+     * retry logic, please hold off the retry until the previous request finishes.
+     *
+     * @param string $path
+     * @param bool $recursive
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
+     */
+    public function listFolder($path = '', $recursive = false)
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+            'recursive' => $recursive,
+        ]);
+
+        $this->apiEndpoint = 'files/list_folder';
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Once a cursor has been retrieved from list_folder, use this to paginate through all files and
+     * retrieve updates to the folder, following the same rules as documented for list_folder.
+     *
+     * @param string $cursor
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder-continue
+     */
+    public function listFolderContinue($cursor = '')
+    {
+        $this->setupRequest([
+            'cursor' => $cursor
+        ]);
+
+        $this->apiEndpoint = 'files/list_folder/continue';
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Move a file or folder to a different location in the user's Dropbox.
+     *
+     * If the source path is a folder all its contents will be moved.
+     *
+     * @param string $fromPath
+     * @param string $toPath
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-move
+     */
+    public function move($fromPath, $toPath)
+    {
+        $this->setupRequest([
+            'from_path' => $this->normalizePath($fromPath),
+            'to_path' => $this->normalizePath($toPath),
+        ]);
+
+        $this->apiEndpoint = 'files/move';
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Create a new file with the contents provided in the request.
+     *
+     * Do not use this to upload a file larger than 150 MB. Instead, create an upload session with upload_session/start.
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-upload
+     *
+     * @param string $path
+     * @param string|resource $contents
+     * @param string|array $mode
+     *
+     * @return array
+     */
+    public function upload($path, $contents, $mode = 'add')
+    {
+        $this->setupRequest([
+            'path' => $this->normalizePath($path),
+            'mode' => $mode,
+        ]);
+
+        $this->content = $contents;
+
+        $this->apiEndpoint = 'files/upload';
+
+        $response = $this->doDropboxApiContentRequest();
+
+        $metadata = \GuzzleHttp\json_decode($response->getBody(), true);
+        $metadata['.tag'] = 'file';
+
+        return $metadata;
+    }
+
+    /**
      * Set Dropbox API request data.
      *
      * @param array $request
