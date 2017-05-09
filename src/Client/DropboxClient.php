@@ -66,19 +66,34 @@ class DropboxClient
      * DropboxClient constructor.
      *
      * @param string $token
+     * @param string $client
      */
-    public function __construct($token)
+    public function __construct($token, $client = '')
     {
         $this->setAccessToken($token);
 
-        $this->client = new HttpClient([
-            'headers' => [
-                'Authorization' => "Bearer {$this->accessToken}",
-            ]
-        ]);
+        $this->setClient($client);
 
         $this->apiUrl = "https://api.dropboxapi.com/2/";
         $this->apiContentUrl = "https://content.dropboxapi.com/2/";
+    }
+
+    /**
+     * Set Http Client.
+     *
+     * @param mixed $client
+     */
+    protected function setClient($client = '')
+    {
+        if ($client instanceof \GuzzleHttp\Client) {
+            $this->client = $client;
+        } else {
+            $this->client = new HttpClient([
+                'headers' => [
+                    'Authorization' => "Bearer {$this->accessToken}",
+                ]
+            ]);
+        }
     }
 
     /**
@@ -385,7 +400,7 @@ class DropboxClient
     protected function doDropboxApiRequest()
     {
         try {
-            $response = $this->client->post("{$this->apiUrl}.{$this->apiEndpoint}", [
+            $response = $this->client->post("{$this->apiUrl}{$this->apiEndpoint}", [
                 'json' => $this->request->toArray()
             ]);
         } catch (HttpClientException $exception) {
@@ -405,7 +420,7 @@ class DropboxClient
     protected function doDropboxApiContentRequest()
     {
         try {
-            $response = $this->client->post("{$this->apiContentUrl}.{$this->apiEndpoint}", [
+            $response = $this->client->post("{$this->apiContentUrl}{$this->apiEndpoint}", [
                 'headers' => [
                     'Dropbox-API-Arg' => json_encode(
                         $this->request->toArray()
