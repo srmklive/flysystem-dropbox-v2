@@ -2,12 +2,12 @@
 
 namespace Srmklive\Dropbox\Adapter;
 
-use LogicException;
-use Srmklive\Dropbox\Client\DropboxClient;
-use League\Flysystem\Config;
-use Srmklive\Dropbox\Exceptions\BadRequest;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\Polyfill\NotSupportingVisibilityTrait;
+use League\Flysystem\Config;
+use LogicException;
+use Srmklive\Dropbox\Client\DropboxClient;
+use Srmklive\Dropbox\Exceptions\BadRequest;
 
 class DropboxAdapter extends AbstractAdapter
 {
@@ -142,7 +142,7 @@ class DropboxAdapter extends AbstractAdapter
      */
     public function read($path)
     {
-        if (! $object = $this->readStream($path)) {
+        if (!$object = $this->readStream($path)) {
             return false;
         }
 
@@ -178,7 +178,7 @@ class DropboxAdapter extends AbstractAdapter
 
         $result = $this->client->listFolder($location, $recursive);
 
-        if (! count($result['entries'])) {
+        if (!count($result['entries'])) {
             return [];
         }
 
@@ -255,9 +255,9 @@ class DropboxAdapter extends AbstractAdapter
     }
 
     /**
-     * @param string $path
+     * @param string          $path
      * @param resource|string $contents
-     * @param string $mode
+     * @param string          $mode
      *
      * @return array|false file metadata
      */

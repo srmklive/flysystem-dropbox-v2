@@ -2,14 +2,13 @@
 
 namespace Srmklive\Dropbox\Test;
 
-
-use Prophecy\Argument;
-use Srmklive\Dropbox\Client\DropboxClient as Client;
-use League\Flysystem\Config;
 use GuzzleHttp\Psr7\Response;
+use League\Flysystem\Config;
 use PHPUnit\Framework\TestCase;
-use Srmklive\Dropbox\Exceptions\BadRequest;
+use Prophecy\Argument;
 use Srmklive\Dropbox\Adapter\DropboxAdapter;
+use Srmklive\Dropbox\Client\DropboxClient as Client;
+use Srmklive\Dropbox\Exceptions\BadRequest;
 
 class DropboxAdapterTest extends TestCase
 {
@@ -31,8 +30,8 @@ class DropboxAdapterTest extends TestCase
     {
         $this->client->upload(Argument::any(), Argument::any(), Argument::any())->willReturn([
             'server_modified' => '2015-05-12T15:50:38Z',
-            'path_display' => '/prefix/something',
-            '.tag' => 'file',
+            'path_display'    => '/prefix/something',
+            '.tag'            => 'file',
         ]);
 
         $result = $this->dropboxAdapter->write('something', 'contents', new Config());
@@ -47,8 +46,8 @@ class DropboxAdapterTest extends TestCase
     {
         $this->client->upload(Argument::any(), Argument::any(), Argument::any())->willReturn([
             'server_modified' => '2015-05-12T15:50:38Z',
-            'path_display' => '/prefix/something',
-            '.tag' => 'file',
+            'path_display'    => '/prefix/something',
+            '.tag'            => 'file',
         ]);
 
         $result = $this->dropboxAdapter->update('something', 'contents', new Config());
@@ -63,8 +62,8 @@ class DropboxAdapterTest extends TestCase
     {
         $this->client->upload(Argument::any(), Argument::any(), Argument::any())->willReturn([
             'server_modified' => '2015-05-12T15:50:38Z',
-            'path_display' => '/prefix/something',
-            '.tag' => 'file',
+            'path_display'    => '/prefix/something',
+            '.tag'            => 'file',
         ]);
 
         $result = $this->dropboxAdapter->writeStream('something', tmpfile(), new Config());
@@ -79,8 +78,8 @@ class DropboxAdapterTest extends TestCase
     {
         $this->client->upload(Argument::any(), Argument::any(), Argument::any())->willReturn([
             'server_modified' => '2015-05-12T15:50:38Z',
-            'path_display' => '/prefix/something',
-            '.tag' => 'file',
+            'path_display'    => '/prefix/something',
+            '.tag'            => 'file',
         ]);
 
         $result = $this->dropboxAdapter->updateStream('something', tmpfile(), new Config());
@@ -99,9 +98,9 @@ class DropboxAdapterTest extends TestCase
     {
         $this->client = $this->prophesize(Client::class);
         $this->client->getMetaData('/one')->willReturn([
-            '.tag'   => 'file',
+            '.tag'            => 'file',
             'server_modified' => '2015-05-12T15:50:38Z',
-            'path_display' => '/one',
+            'path_display'    => '/one',
         ]);
 
         $this->dropboxAdapter = new DropboxAdapter($this->client->reveal());
@@ -169,7 +168,7 @@ class DropboxAdapterTest extends TestCase
     {
         $this->client->createFolder('/prefix/fail/please')->willThrow(new BadRequest(new Response(409)));
         $this->client->createFolder('/prefix/pass/please')->willReturn([
-            '.tag' => 'folder',
+            '.tag'           => 'folder',
             'path_display'   => '/prefix/pass/please',
         ]);
 
