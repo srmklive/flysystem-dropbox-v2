@@ -118,7 +118,7 @@ class ClientTest extends TestCase
 
         $client = new Client('test_token', $mockHttpClient);
 
-        $this->assertEquals(['name' => 'math'], $client->getMetadata('Homework/math'));
+        $this->assertEquals(['name' => 'math'], $client->getMetaData('Homework/math'));
     }
 
     /** @test */
