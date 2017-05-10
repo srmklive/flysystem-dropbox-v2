@@ -5,6 +5,7 @@ namespace Srmklive\Dropbox\Test;
 use GuzzleHttp\Client as HttpClient;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Srmklive\Dropbox\Client\DropboxClient as Client;
 
 class ClientTest extends TestCase
@@ -78,6 +79,31 @@ class ClientTest extends TestCase
     }
 
     /** @test */
+    public function it_can_download_a_file()
+    {
+        $expectedResponse = $this->getMockBuilder(StreamInterface::class)
+            ->getMock();
+        $expectedResponse->expects($this->once())
+            ->method('isReadable')
+            ->willReturn(true);
+
+        $mockHttpClient = $this->mock_http_request(
+            $expectedResponse,
+            'https://content.dropboxapi.com/2/files/download',
+            [
+                'headers' => [
+                    'Dropbox-API-Arg' => json_encode(['path' => '/Homework/math/answers.txt']),
+                ],
+                'body'    => '',
+            ]
+        );
+
+        $client = new Client('test_token', $mockHttpClient);
+
+        $this->assertTrue(is_resource($client->download('Homework/math/answers.txt')));
+    }
+
+    /** @test */
     public function it_can_retrieve_metadata()
     {
         $mockHttpClient = $this->mock_http_request(
@@ -120,6 +146,34 @@ class ClientTest extends TestCase
     }
 
     /** @test */
+    public function it_can_get_a_thumbnail()
+    {
+        $expectedResponse = $this->getMockBuilder(StreamInterface::class)
+            ->getMock();
+
+        $mockHttpClient = $this->mock_http_request(
+            $expectedResponse,
+            'https://content.dropboxapi.com/2/files/get_thumbnail',
+            [
+                'headers' => [
+                    'Dropbox-API-Arg' => json_encode(
+                        [
+                            'path'   => '/Homework/math/answers.jpg',
+                            'format' => 'jpeg',
+                            'size'   => 'w64h64',
+                        ]
+                    ),
+                ],
+                'body'    => '',
+            ]
+        );
+
+        $client = new Client('test_token', $mockHttpClient);
+
+        $this->assertTrue(is_string($client->getThumbnail('Homework/math/answers.jpg')));
+    }
+
+    /** @test */
     public function it_can_list_a_folder()
     {
         $mockHttpClient = $this->mock_http_request(
@@ -157,6 +211,30 @@ class ClientTest extends TestCase
             ['name' => 'math'],
             $client->listFolderContinue('ZtkX9_EHj3x7PMkVuFIhwKYXEpwpLwyxp9vMKomUhllil9q7eWiAu')
         );
+    }
+
+    /** @test */
+    public function it_can_move_a_file()
+    {
+        $expectedResponse = [
+            '.tag' => 'file',
+            'name' => 'Prime_Numbers.txt',
+        ];
+
+        $mockHttpClient = $this->mock_http_request(
+            json_encode($expectedResponse),
+            'https://api.dropboxapi.com/2/files/move',
+            [
+                'json' => [
+                    'from_path' => '/from/path/file.txt',
+                    'to_path'   => '',
+                ],
+            ]
+        );
+
+        $client = new Client('test_token', $mockHttpClient);
+
+        $this->assertEquals($expectedResponse, $client->move('/from/path/file.txt', ''));
     }
 
     /** @test */

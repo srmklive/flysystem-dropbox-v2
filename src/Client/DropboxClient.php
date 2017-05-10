@@ -407,7 +407,7 @@ class DropboxClient
             throw $this->determineException($exception);
         }
 
-        return \GuzzleHttp\json_decode($response->getBody(), true);
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -419,15 +419,20 @@ class DropboxClient
      */
     protected function doDropboxApiContentRequest()
     {
+        $headers['Dropbox-API-Arg'] = json_encode(
+            $this->request->toArray()
+        );
+
+        if (!empty($this->content)) {
+            $headers['Content-Type'] = 'application/octet-stream';
+        }
+
+        $body = !empty($this->content) ? $this->content : '';
+
         try {
             $response = $this->client->post("{$this->apiContentUrl}{$this->apiEndpoint}", [
-                'headers' => [
-                    'Dropbox-API-Arg' => json_encode(
-                        $this->request->toArray()
-                    ),
-                    'Content-Type' => 'application/octet-stream',
-                ],
-                'body' => !empty($this->content) ? $this->content : '',
+                'headers' => $headers,
+                'body'    => $body,
             ]);
         } catch (HttpClientException $exception) {
             throw $this->determineException($exception);
@@ -445,7 +450,9 @@ class DropboxClient
      */
     protected function normalizePath($path)
     {
-        return (trim($path, '/') === '') ? '' : '/'.$path;
+        $path = (trim($path, '/') === '') ? '' : '/'.$path;
+
+        return str_replace('//', '/', $path);
     }
 
     /**
