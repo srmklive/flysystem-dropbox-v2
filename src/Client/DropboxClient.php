@@ -74,8 +74,8 @@ class DropboxClient
 
         $this->setClient($client);
 
-        $this->apiUrl = "https://api.dropboxapi.com/2/";
-        $this->apiContentUrl = "https://content.dropboxapi.com/2/";
+        $this->apiUrl = 'https://api.dropboxapi.com/2/';
+        $this->apiContentUrl = 'https://content.dropboxapi.com/2/';
     }
 
     /**
@@ -91,7 +91,7 @@ class DropboxClient
             $this->client = new HttpClient([
                 'headers' => [
                     'Authorization' => "Bearer {$this->accessToken}",
-                ]
+                ],
             ]);
         }
     }
@@ -122,7 +122,7 @@ class DropboxClient
     {
         $this->setupRequest([
             'from_path' => $this->normalizePath($fromPath),
-            'to_path' => $this->normalizePath($toPath),
+            'to_path'   => $this->normalizePath($toPath),
         ]);
 
         $this->apiEndpoint = 'files/copy';
@@ -262,9 +262,9 @@ class DropboxClient
     public function getThumbnail($path, $format = 'jpeg', $size = 'w64h64')
     {
         $this->setupRequest([
-            'path' => $this->normalizePath($path),
+            'path'   => $this->normalizePath($path),
             'format' => $format,
-            'size' => $size,
+            'size'   => $size,
         ]);
 
         $this->apiEndpoint = 'files/get_thumbnail';
@@ -285,7 +285,7 @@ class DropboxClient
      * retry logic, please hold off the retry until the previous request finishes.
      *
      * @param string $path
-     * @param bool $recursive
+     * @param bool   $recursive
      *
      * @return \Psr\Http\Message\ResponseInterface
      *
@@ -294,7 +294,7 @@ class DropboxClient
     public function listFolder($path = '', $recursive = false)
     {
         $this->setupRequest([
-            'path' => $this->normalizePath($path),
+            'path'      => $this->normalizePath($path),
             'recursive' => $recursive,
         ]);
 
@@ -316,7 +316,7 @@ class DropboxClient
     public function listFolderContinue($cursor = '')
     {
         $this->setupRequest([
-            'cursor' => $cursor
+            'cursor' => $cursor,
         ]);
 
         $this->apiEndpoint = 'files/list_folder/continue';
@@ -340,7 +340,7 @@ class DropboxClient
     {
         $this->setupRequest([
             'from_path' => $this->normalizePath($fromPath),
-            'to_path' => $this->normalizePath($toPath),
+            'to_path'   => $this->normalizePath($toPath),
         ]);
 
         $this->apiEndpoint = 'files/move';
@@ -355,9 +355,9 @@ class DropboxClient
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-upload
      *
-     * @param string $path
+     * @param string          $path
      * @param string|resource $contents
-     * @param string|array $mode
+     * @param string|array    $mode
      *
      * @return array
      */
@@ -393,15 +393,15 @@ class DropboxClient
     /**
      * Perform Dropbox API request.
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
     protected function doDropboxApiRequest()
     {
         try {
             $response = $this->client->post("{$this->apiUrl}{$this->apiEndpoint}", [
-                'json' => $this->request->toArray()
+                'json' => $this->request->toArray(),
             ]);
         } catch (HttpClientException $exception) {
             throw $this->determineException($exception);
@@ -413,9 +413,9 @@ class DropboxClient
     /**
      * Perform Dropbox API request.
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
     protected function doDropboxApiContentRequest()
     {
@@ -425,7 +425,7 @@ class DropboxClient
                     'Dropbox-API-Arg' => json_encode(
                         $this->request->toArray()
                     ),
-                    'Content-Type' => 'application/octet-stream'
+                    'Content-Type' => 'application/octet-stream',
                 ],
                 'body' => !empty($this->content) ? $this->content : '',
             ]);
@@ -460,6 +460,7 @@ class DropboxClient
         if (in_array($exception->getResponse()->getStatusCode(), [400, 409])) {
             return new BadRequest($exception->getResponse());
         }
+
         return $exception;
     }
 }

@@ -2,14 +2,10 @@
 
 namespace Srmklive\Dropbox\Test;
 
-use Srmklive\Dropbox\Client\DropboxClient as Client;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Client as HttpClient;
-use Psr\Http\Message\RequestInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\ClientException;
-use Srmklive\Dropbox\Exceptions\BadRequest;
+use Srmklive\Dropbox\Client\DropboxClient as Client;
 
 class ClientTest extends TestCase
 {
