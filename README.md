@@ -3,6 +3,7 @@
 [![StyleCI](https://styleci.io/repos/90866593/shield?style=flat)](https://styleci.io/repos/90866593)
 [![Build Status](https://img.shields.io/travis/srmklive/flysystem-dropbox-v2/master.svg?style=flat-square)](https://travis-ci.org/srmklive/flysystem-dropbox-v2)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/srmklive/flysystem-dropbox-v2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/srmklive/flysystem-dropbox-v2/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/srmklive/flysystem-dropbox-v2/badge.svg?branch=master)](https://coveralls.io/github/srmklive/flysystem-dropbox-v2?branch=master)
 
 This package contains a [Flysystem](https://flysystem.thephpleague.com/) adapter for Dropbox API v2.
 
@@ -21,6 +22,7 @@ composer require srmklive/flysystem-dropbox-v2
 ## Usage
 
 The first thing you need to do is get an authorization token at Dropbox. A token can be generated in the [App Console](https://www.dropbox.com/developers/apps) for any Dropbox API app. You'll find more info at [the Dropbox Developer Blog](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/).
+
 ``` php
 use League\Flysystem\Filesystem;
 use Srmklive\Dropbox\Client\DropboxClient;
