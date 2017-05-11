@@ -65,7 +65,7 @@ class DropboxClient
     /**
      * DropboxClient constructor.
      *
-     * @param string $token
+     * @param string             $token
      * @param \GuzzleHttp\Client $client
      */
     public function __construct($token, HttpClient $client = null)
@@ -419,6 +419,7 @@ class DropboxClient
      */
     protected function doDropboxApiContentRequest()
     {
+        $headers = [];
         $headers['Dropbox-API-Arg'] = json_encode(
             $this->request->toArray()
         );
