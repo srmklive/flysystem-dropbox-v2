@@ -66,9 +66,9 @@ class DropboxClient
      * DropboxClient constructor.
      *
      * @param string $token
-     * @param string $client
+     * @param \GuzzleHttp\Client $client
      */
-    public function __construct($token, $client = '')
+    public function __construct($token, HttpClient $client = null)
     {
         $this->setAccessToken($token);
 
@@ -81,11 +81,11 @@ class DropboxClient
     /**
      * Set Http Client.
      *
-     * @param mixed $client
+     * @param \GuzzleHttp\Client $client
      */
-    protected function setClient($client = '')
+    protected function setClient(HttpClient $client = null)
     {
-        if ($client instanceof \GuzzleHttp\Client) {
+        if ($client instanceof HttpClient) {
             $this->client = $client;
         } else {
             $this->client = new HttpClient([
@@ -464,7 +464,7 @@ class DropboxClient
      */
     protected function determineException(HttpClientException $exception)
     {
-        if (in_array($exception->getResponse()->getStatusCode(), [400, 409])) {
+        if (!empty($exception->getResponse()) && in_array($exception->getResponse()->getStatusCode(), [400, 409])) {
             return new BadRequest($exception->getResponse());
         }
 
