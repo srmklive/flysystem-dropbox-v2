@@ -1,5 +1,6 @@
 # flysystem-dropbox-v2
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/srmklive/flysystem-dropbox-v2.svg?style=flat-square)](https://packagist.org/packages/srmklive/flysystem-dropbox-v2)
 [![StyleCI](https://styleci.io/repos/90866593/shield?style=flat)](https://styleci.io/repos/90866593)
 [![Build Status](https://img.shields.io/travis/srmklive/flysystem-dropbox-v2/master.svg?style=flat-square)](https://travis-ci.org/srmklive/flysystem-dropbox-v2)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/srmklive/flysystem-dropbox-v2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/srmklive/flysystem-dropbox-v2/?branch=master)
