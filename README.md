@@ -31,7 +31,7 @@ use League\Flysystem\Filesystem;
 use Srmklive\Dropbox\Client\DropboxClient;
 use Srmklive\Dropbox\Adapter\DropboxAdapter;
 
-$client = new Client($authorizationToken);
+$client = new DropboxClient($authorizationToken);
 
 $adapter = new DropboxAdapter($client);
 
