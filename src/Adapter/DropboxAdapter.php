@@ -274,7 +274,14 @@ class DropboxAdapter extends AbstractAdapter
         return $this->normalizeResponse($object);
     }
 
-    protected function normalizeResponse(array $response)
+    /**
+     * Parse response from Dropbox.
+     *
+     * @param array|\Psr\Http\Message\ResponseInterface $response
+     *
+     * @return array
+     */
+    protected function normalizeResponse($response)
     {
         $normalizedPath = ltrim($this->removePathPrefix($response['path_display']), '/');
 
