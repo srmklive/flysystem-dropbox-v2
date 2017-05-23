@@ -14,7 +14,6 @@ env:
     - coverage=no
 
 before_script:
-  - composer config discard-changes true
   - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable; fi
   - if [[ $setup = 'coveralls' ]]; then travis_retry composer require "satooshi/php-coveralls=~0.7" --prefer-dist --no-interaction --dev; fi
 
