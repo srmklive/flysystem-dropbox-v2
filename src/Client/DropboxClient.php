@@ -411,6 +411,26 @@ class DropboxClient
     }
 
     /**
+     * Setup headers for Dropbox API request.
+     *
+     * @return array
+     */
+    protected function setupDropboxHeaders()
+    {
+        $headers = [
+            'Dropbox-API-Arg' => json_encode(
+                $this->request->toArray()
+            ),
+        ];
+
+        if (!empty($this->content)) {
+            $headers['Content-Type'] = 'application/octet-stream';
+        }
+
+        return $headers;
+    }
+
+    /**
      * Perform Dropbox API request.
      *
      * @throws \Exception
@@ -419,21 +439,10 @@ class DropboxClient
      */
     protected function doDropboxApiContentRequest()
     {
-        $headers = [];
-        $headers['Dropbox-API-Arg'] = json_encode(
-            $this->request->toArray()
-        );
-
-        if (!empty($this->content)) {
-            $headers['Content-Type'] = 'application/octet-stream';
-        }
-
-        $body = !empty($this->content) ? $this->content : '';
-
         try {
             $response = $this->client->post("{$this->apiContentUrl}{$this->apiEndpoint}", [
-                'headers' => $headers,
-                'body'    => $body,
+                'headers' => $this->setupDropboxHeaders(),
+                'body'    => !empty($this->content) ? $this->content : '',
             ]);
         } catch (HttpClientException $exception) {
             throw $this->determineException($exception);
