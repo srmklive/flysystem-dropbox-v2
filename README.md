@@ -12,7 +12,7 @@ This package contains a [Flysystem](https://flysystem.thephpleague.com/) adapter
 
 # Credits
 
-This package is direct port of [Flysystem Dropbox](https://github.com/spatie/flysystem-dropbox) by [Freek Van der Herten](https://github.com/freekmurze) with support for PHP 5.6. 
+This package is direct port of [Flysystem Dropbox](https://github.com/spatie/flysystem-dropbox) by [Freek Van der Herten](https://github.com/freekmurze) with support for PHP 5.5 & 5.6. 
 
 # Installation
 
