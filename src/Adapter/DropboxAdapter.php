@@ -8,10 +8,11 @@ use League\Flysystem\Config;
 use LogicException;
 use Srmklive\Dropbox\Client\DropboxClient;
 use Srmklive\Dropbox\Exceptions\BadRequest;
+use Srmklive\Dropbox\ParseResponse;
 
 class DropboxAdapter extends AbstractAdapter
 {
-    use NotSupportingVisibilityTrait;
+    use NotSupportingVisibilityTrait, ParseResponse;
 
     /** @var \Srmklive\Dropbox\Client\DropboxClient */
     protected $client;
@@ -249,6 +250,9 @@ class DropboxAdapter extends AbstractAdapter
         return '/'.trim($path, '/');
     }
 
+    /**
+     * @return DropboxClient
+     */
     public function getClient()
     {
         return $this->client;
@@ -272,33 +276,5 @@ class DropboxAdapter extends AbstractAdapter
         }
 
         return $this->normalizeResponse($object);
-    }
-
-    /**
-     * Parse response from Dropbox.
-     *
-     * @param array|\Psr\Http\Message\ResponseInterface $response
-     *
-     * @return array
-     */
-    protected function normalizeResponse($response)
-    {
-        $normalizedPath = ltrim($this->removePathPrefix($response['path_display']), '/');
-
-        $normalizedResponse = ['path' => $normalizedPath];
-
-        if (isset($response['server_modified'])) {
-            $normalizedResponse['timestamp'] = strtotime($response['server_modified']);
-        }
-
-        if (isset($response['size'])) {
-            $normalizedResponse['size'] = $response['size'];
-            $normalizedResponse['bytes'] = $response['size'];
-        }
-
-        $type = ($response['.tag'] === 'folder' ? 'dir' : 'file');
-        $normalizedResponse['type'] = $type;
-
-        return $normalizedResponse;
     }
 }
