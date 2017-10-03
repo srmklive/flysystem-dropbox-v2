@@ -343,7 +343,7 @@ class DropboxClient
             'to_path'   => $this->normalizePath($toPath),
         ]);
 
-        $this->apiEndpoint = 'files/move';
+        $this->apiEndpoint = 'files/move_v2';
 
         return $this->doDropboxApiRequest();
     }
