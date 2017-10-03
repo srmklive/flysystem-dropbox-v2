@@ -496,7 +496,6 @@ class DropboxClient
         return new DropboxUploadCounter($response['session_id'], strlen($contents));
     }
 
-
     /**
      * Append more data to an upload session.
      * When the parameter close is set, this call will close the session.
@@ -569,6 +568,7 @@ class DropboxClient
      * @param int      $chunkSize
      *
      * @throws \Exception
+     *
      * @return string
      */
     protected static function readChunk($stream, int $chunkSize)

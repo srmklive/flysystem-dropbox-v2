@@ -2,7 +2,6 @@
 
 namespace Srmklive\Dropbox;
 
-
 class DropboxUploadCounter
 {
     /**

@@ -305,8 +305,8 @@ class ClientTest extends TestCase
                     'Dropbox-API-Arg' => json_encode(
                         [
                             'cursor' => [
-                                'session_id' => 'mockedUploadSessionId',
-                                'offset' => 10,
+                                'session_id'    => 'mockedUploadSessionId',
+                                'offset'        => 10,
                             ],
                             'close' => false,
                         ]
@@ -384,14 +384,14 @@ class ClientTest extends TestCase
                 'headers' => [
                     'Dropbox-API-Arg' => json_encode([
                         'cursor' => [
-                            'session_id' => 'mockedUploadSessionId',
-                            'offset' => 10,
+                            'session_id'    => 'mockedUploadSessionId',
+                            'offset'        => 10,
                         ],
                         'commit' => [
-                            'path' => 'Homework/math/answers.txt',
-                            'mode' => 'add',
-                            'autorename' => false,
-                            'mute' => false,
+                            'path'          => 'Homework/math/answers.txt',
+                            'mode'          => 'add',
+                            'autorename'    => false,
+                            'mute'          => false,
                         ],
                     ]),
                     'Content-Type' => 'application/octet-stream',
@@ -420,25 +420,25 @@ class ClientTest extends TestCase
     public function it_can_get_account_info()
     {
         $expectedResponse = [
-            'account_id' => 'dbid:AAH4f99T0taONIb-OurWxbNQ6ywGRopQngc',
-            'name' => [
-                'given_name' => 'Franz',
-                'surname' => 'Ferdinand',
-                'familiar_name' => 'Franz',
-                'display_name' => 'Franz Ferdinand (Personal)',
-                'abbreviated_name' => 'FF',
+            'account_id'    => 'dbid:AAH4f99T0taONIb-OurWxbNQ6ywGRopQngc',
+            'name'          => [
+                'given_name'        => 'Franz',
+                'surname'           => 'Ferdinand',
+                'familiar_name'     => 'Franz',
+                'display_name'      => 'Franz Ferdinand (Personal)',
+                'abbreviated_name'  => 'FF',
             ],
-            'email' => 'franz@gmail.com',
-            'email_verified' => false,
-            'disabled' => false,
-            'locale' => 'en',
-            'referral_link' => 'https://db.tt/ZITNuhtI',
-            'is_paired' => false,
-            'account_type' => [
+            'email'             => 'franz@gmail.com',
+            'email_verified'    => false,
+            'disabled'          => false,
+            'locale'            => 'en',
+            'referral_link'     => 'https://db.tt/ZITNuhtI',
+            'is_paired'         => false,
+            'account_type'      => [
                 '.tag' => 'basic',
             ],
             'profile_photo_url' => 'https://dl-web.dropbox.com/account_photo/get/dbid%3AAAH4f99T0taONIb-OurWxbNQ6ywGRopQngc?vers=1453416673259&size=128x128',
-            'country' => 'US',
+            'country'           => 'US',
         ];
 
         $mockGuzzle = $this->mock_http_request(
