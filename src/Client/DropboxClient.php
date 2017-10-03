@@ -381,6 +381,34 @@ class DropboxClient
     }
 
     /**
+     * Get Account Info for current authenticated user.
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#users-get_current_account
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getAccountInfo()
+    {
+        $this->apiEndpoint = 'users/get_current_account';
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Revoke current access token.
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#auth-token-revoke
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function revokeToken()
+    {
+        $this->apiEndpoint = 'auth/token/revoke';
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
      * Set Dropbox API request data.
      *
      * @param array $request
