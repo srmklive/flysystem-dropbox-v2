@@ -436,9 +436,9 @@ class DropboxClient
      *
      * @return array
      */
-    public function uploadChunk(string $path, $contents, $mode = 'add', $chunkSize = null)
+    public function uploadChunk($path, $contents, $mode = 'add', $chunkSize = null)
     {
-        $chunkSize = $chunkSize ?? static::MAX_CHUNK_SIZE;
+        $chunkSize = empty($chunkSize) ? static::MAX_CHUNK_SIZE : $chunkSize;
         $stream = $contents;
 
         // This method relies on resources, so we need to convert strings to resource
@@ -478,7 +478,7 @@ class DropboxClient
      *
      * @return \Srmklive\Dropbox\DropboxUploadCounter
      */
-    public function startUploadSession($contents, bool $close = false)
+    public function startUploadSession($contents, $close = false)
     {
         $this->setupRequest(
             compact('close')
@@ -509,7 +509,7 @@ class DropboxClient
      *
      * @return \Srmklive\Dropbox\DropboxUploadCounter
      */
-    public function appendContentToUploadSession($contents, DropboxUploadCounter $cursor, bool $close = false)
+    public function appendContentToUploadSession($contents, DropboxUploadCounter $cursor, $close = false)
     {
         $this->setupRequest(compact('cursor', 'close'));
 
@@ -539,7 +539,7 @@ class DropboxClient
      *
      * @return array
      */
-    public function finishUploadSession($contents, DropboxUploadCounter $cursor, string $path, $mode = 'add', $autorename = false, $mute = false)
+    public function finishUploadSession($contents, DropboxUploadCounter $cursor, $path, $mode = 'add', $autorename = false, $mute = false)
     {
         $arguments = compact('cursor');
         $arguments['commit'] = compact('path', 'mode', 'autorename', 'mute');
@@ -571,7 +571,7 @@ class DropboxClient
      *
      * @return string
      */
-    protected static function readChunk($stream, int $chunkSize)
+    protected static function readChunk($stream, $chunkSize)
     {
         $chunk = '';
         while (!feof($stream) && $chunkSize > 0) {
