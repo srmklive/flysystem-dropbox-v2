@@ -5,7 +5,6 @@ namespace Srmklive\Dropbox\Client;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException as HttpClientException;
 use GuzzleHttp\Psr7\StreamWrapper;
-use Illuminate\Support\Collection;
 use Srmklive\Dropbox\Exceptions\BadRequest;
 use Srmklive\Dropbox\UploadContent;
 
@@ -61,9 +60,9 @@ class DropboxClient
     protected $content;
 
     /**
-     * Collection containing Dropbox API request data.
+     * Dropbox API request data.
      *
-     * @var \Illuminate\Support\Collection
+     * @var array
      */
     protected $request;
 
@@ -424,7 +423,7 @@ class DropboxClient
      */
     protected function setupRequest($request)
     {
-        $this->request = new Collection($request);
+        $this->request = $request;
     }
 
     /**
@@ -436,7 +435,7 @@ class DropboxClient
      */
     protected function doDropboxApiRequest()
     {
-        $request = empty($this->request) ? [] : ['json' => $this->request->toArray()];
+        $request = empty($this->request) ? [] : ['json' => $this->request];
 
         try {
             $response = $this->client->post("{$this->apiUrl}{$this->apiEndpoint}", $request);
@@ -456,7 +455,7 @@ class DropboxClient
     {
         $headers = [
             'Dropbox-API-Arg' => json_encode(
-                $this->request->toArray()
+                $this->request
             ),
         ];
 
