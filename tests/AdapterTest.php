@@ -10,7 +10,7 @@ use Srmklive\Dropbox\Adapter\DropboxAdapter;
 use Srmklive\Dropbox\Client\DropboxClient as Client;
 use Srmklive\Dropbox\Exceptions\BadRequest;
 
-class DropboxAdapterTest extends TestCase
+class AdapterTest extends TestCase
 {
     /** @var \Srmklive\Dropbox\Client\DropboxClient|\Prophecy\Prophecy\ObjectProphecy */
     protected $client;
