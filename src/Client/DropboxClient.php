@@ -483,7 +483,7 @@ class DropboxClient
         } catch (HttpClientException $exception) {
             throw $this->determineException($exception);
         }
-
+        $this->content = null;
         return $response;
     }
 
