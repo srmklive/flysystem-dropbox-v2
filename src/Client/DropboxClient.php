@@ -275,6 +275,8 @@ class DropboxClient
 
         $this->apiEndpoint = 'files/get_thumbnail';
 
+        $this->content = null;
+
         $response = $this->doDropboxApiContentRequest();
 
         return (string) $response->getBody();
