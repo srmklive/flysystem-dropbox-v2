@@ -196,6 +196,8 @@ class DropboxClient
         ]);
 
         $this->apiEndpoint = 'files/download';
+        
+        $this->content = null;
 
         $response = $this->doDropboxApiContentRequest();
 
