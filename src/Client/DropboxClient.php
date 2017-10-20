@@ -483,9 +483,10 @@ class DropboxClient
                 'body'    => !empty($this->content) ? $this->content : '',
             ]);
         } catch (HttpClientException $exception) {
+            $this->content = null;
             throw $this->determineException($exception);
         }
-
+        $this->content = null;
         return $response;
     }
 
