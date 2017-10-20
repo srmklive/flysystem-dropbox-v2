@@ -197,6 +197,8 @@ class DropboxClient
 
         $this->apiEndpoint = 'files/download';
 
+        $this->content = null;
+
         $response = $this->doDropboxApiContentRequest();
 
         return StreamWrapper::getResource($response->getBody());
