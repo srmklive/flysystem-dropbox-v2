@@ -465,7 +465,7 @@ class ClientTest extends TestCase
 
         $client->revokeToken();
     }
-    
+
     /** @test */
     public function it_can_normalize_paths()
     {
@@ -483,7 +483,7 @@ class ClientTest extends TestCase
         $this->assertEquals($normalizeFunction->invokeArgs($client, ['id:1234567890']), 'id:1234567890');
         $this->assertEquals($normalizeFunction->invokeArgs($client, ['ns:1234567890']), 'ns:1234567890');
         $this->assertEquals($normalizeFunction->invokeArgs($client, ['rev:1234567890']), 'rev:1234567890');
-    }    
+    }
 
     private function mock_http_request($expectedResponse, $expectedEndpoint, $expectedParams)
     {
@@ -544,7 +544,6 @@ class ClientTest extends TestCase
 
         return $mockClient;
     }
-    
 
     protected static function getMethod($name)
     {
@@ -553,5 +552,5 @@ class ClientTest extends TestCase
         $method->setAccessible(true);
 
         return $method;
-    }    
+    }
 }

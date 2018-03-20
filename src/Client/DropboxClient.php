@@ -500,10 +500,10 @@ class DropboxClient
      */
     protected function normalizePath($path)
     {
-        if (preg_match("/^id:.*|^rev:.*|^(ns:[0-9]+(\/.*)?)/",  $path) === 1) {
+        if (preg_match("/^id:.*|^rev:.*|^(ns:[0-9]+(\/.*)?)/", $path) === 1) {
             return $path;
-        }        
-        
+        }
+
         $path = (trim($path, '/') === '') ? '' : '/'.$path;
 
         return str_replace('//', '/', $path);
