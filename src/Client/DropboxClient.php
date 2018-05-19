@@ -462,10 +462,10 @@ class DropboxClient
                 $this->request
             ),
         ];
-	if (!empty($this->content) || 
-	           $this->apiEndpoint == 'files/upload_session/finish') {
+        if (!empty($this->content) ||
+               $this->apiEndpoint == 'files/upload_session/finish') {
             // The upload_session/finish API requires a Content-Type, always
-	    $headers['Content-Type'] = 'application/octet-stream';
+            $headers['Content-Type'] = 'application/octet-stream';
         }
 
         return $headers;
