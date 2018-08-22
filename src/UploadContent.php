@@ -52,6 +52,8 @@ trait UploadContent
      * @param int             $chunkSize
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function uploadChunk($path, $contents, $mode = 'add', $chunkSize = null)
     {
