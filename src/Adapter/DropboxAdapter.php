@@ -5,9 +5,8 @@ namespace Srmklive\Dropbox\Adapter;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\Polyfill\NotSupportingVisibilityTrait;
 use League\Flysystem\Config;
-use League\Flysystem\Util\MimeType;
 use Srmklive\Dropbox\Client\DropboxClient;
-use Srmklive\Dropbox\Exceptions\BadRequest;
+use Srmklive\Dropbox\MimeType;
 use Srmklive\Dropbox\ParseResponse;
 
 class DropboxAdapter extends AbstractAdapter
@@ -66,11 +65,12 @@ class DropboxAdapter extends AbstractAdapter
 
         try {
             $this->client->move($path, $newPath);
-        } catch (BadRequest $e) {
-            return false;
+
+            return true;
+        } catch (\Exception $e) {
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -83,11 +83,12 @@ class DropboxAdapter extends AbstractAdapter
 
         try {
             $this->client->copy($path, $newpath);
-        } catch (BadRequest $e) {
-            return false;
+
+            return true;
+        } catch (\Exception $e) {
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -99,11 +100,12 @@ class DropboxAdapter extends AbstractAdapter
 
         try {
             $this->client->delete($location);
-        } catch (BadRequest $e) {
-            return false;
+
+            return true;
+        } catch (\Exception $e) {
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -120,14 +122,16 @@ class DropboxAdapter extends AbstractAdapter
     public function createDir($dirname, Config $config)
     {
         $path = $this->applyPathPrefix($dirname);
+        $response = false;
 
         try {
             $object = $this->client->createFolder($path);
-        } catch (BadRequest $e) {
-            return false;
+
+            $response = $this->normalizeResponse($object);
+        } catch (\Exception $e) {
         }
 
-        return $this->normalizeResponse($object);
+        return $response;
     }
 
     /**
@@ -143,15 +147,18 @@ class DropboxAdapter extends AbstractAdapter
      */
     public function read($path)
     {
-        if (!$object = $this->readStream($path)) {
-            return false;
+        try {
+            $object = $this->readStream($path);
+
+            $object['contents'] = stream_get_contents($object['stream']);
+            fclose($object['stream']);
+            unset($object['stream']);
+
+            return $object;
+        } catch (\Exception $exception) {
         }
 
-        $object['contents'] = stream_get_contents($object['stream']);
-        fclose($object['stream']);
-        unset($object['stream']);
-
-        return $object;
+        return false;
     }
 
     /**
@@ -160,14 +167,16 @@ class DropboxAdapter extends AbstractAdapter
     public function readStream($path)
     {
         $path = $this->applyPathPrefix($path);
+        $response = false;
 
         try {
             $stream = $this->client->download($path);
-        } catch (BadRequest $e) {
-            return false;
+
+            $response = compact('stream');
+        } catch (\Exception $e) {
         }
 
-        return compact('stream');
+        return $response;
     }
 
     /**
@@ -175,19 +184,20 @@ class DropboxAdapter extends AbstractAdapter
      */
     public function listContents($directory = '', $recursive = false)
     {
-        $location = $this->applyPathPrefix($directory);
+        $response = [];
 
-        $result = $this->client->listFolder($location, $recursive);
+        try {
+            $location = $this->applyPathPrefix($directory);
 
-        if (!count($result['entries'])) {
-            return [];
+            $result = $this->client->listFolder($location, $recursive);
+
+            $response = array_map(function ($entry) {
+                return $this->normalizeResponse($entry);
+            }, $result['entries']);
+        } catch (\Exception $exception) {
         }
 
-        return array_map(function ($entry) {
-            $path = $this->removePathPrefix($entry['path_display']);
-
-            return $this->normalizeResponse($entry, $path);
-        }, $result['entries']);
+        return $response;
     }
 
     /**
@@ -199,11 +209,11 @@ class DropboxAdapter extends AbstractAdapter
 
         try {
             $object = $this->client->getMetadata($path);
-        } catch (BadRequest $e) {
+
+            return $this->normalizeResponse($object);
+        } catch (\Exception  $e) {
             return false;
         }
-
-        return $this->normalizeResponse($object);
     }
 
     /**
@@ -230,11 +240,17 @@ class DropboxAdapter extends AbstractAdapter
         return $this->getMetadata($path);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTemporaryLink($path)
     {
         return $this->client->getTemporaryLink($path);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getThumbnail($path, $format = 'jpeg', $size = 'w64h64')
     {
         return $this->client->getThumbnail($path, $format, $size);
@@ -263,6 +279,8 @@ class DropboxAdapter extends AbstractAdapter
      * @param resource|string $contents
      * @param string          $mode
      *
+     * @throws \Exception
+     *
      * @return array|false file metadata
      */
     protected function upload($path, $contents, $mode)
@@ -271,10 +289,11 @@ class DropboxAdapter extends AbstractAdapter
 
         try {
             $object = $this->client->upload($path, $contents, $mode);
-        } catch (BadRequest $e) {
-            return false;
+
+            return $this->normalizeResponse($object);
+        } catch (\Exception $e) {
         }
 
-        return $this->normalizeResponse($object);
+        return false;
     }
 }
