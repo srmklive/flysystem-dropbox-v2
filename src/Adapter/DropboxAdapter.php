@@ -6,12 +6,12 @@ use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\Polyfill\NotSupportingVisibilityTrait;
 use League\Flysystem\Config;
 use Srmklive\Dropbox\Client\DropboxClient;
-use Srmklive\Dropbox\MimeType;
+use Srmklive\Dropbox\GetMimeType;
 use Srmklive\Dropbox\ParseResponse;
 
 class DropboxAdapter extends AbstractAdapter
 {
-    use NotSupportingVisibilityTrait, ParseResponse;
+    use GetMimeType, NotSupportingVisibilityTrait, ParseResponse;
 
     /** @var \Srmklive\Dropbox\Client\DropboxClient */
     protected $client;
@@ -67,10 +67,9 @@ class DropboxAdapter extends AbstractAdapter
             $this->client->move($path, $newPath);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -86,9 +85,8 @@ class DropboxAdapter extends AbstractAdapter
 
             return true;
         } catch (\Exception $e) {
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -102,10 +100,9 @@ class DropboxAdapter extends AbstractAdapter
             $this->client->delete($location);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -122,16 +119,14 @@ class DropboxAdapter extends AbstractAdapter
     public function createDir($dirname, Config $config)
     {
         $path = $this->applyPathPrefix($dirname);
-        $response = false;
 
         try {
             $object = $this->client->createFolder($path);
 
-            $response = $this->normalizeResponse($object);
-        } catch (\Exception $e) {
+            return $this->normalizeResponse($object);
+        } catch (\Exception $exception) {
+            return false;
         }
-
-        return $response;
     }
 
     /**
@@ -147,18 +142,14 @@ class DropboxAdapter extends AbstractAdapter
      */
     public function read($path)
     {
-        try {
-            $object = $this->readStream($path);
-
+        $object = $this->readStream($path);
+        if ($object) {
             $object['contents'] = stream_get_contents($object['stream']);
             fclose($object['stream']);
             unset($object['stream']);
-
-            return $object;
-        } catch (\Exception $exception) {
         }
 
-        return false;
+        return ($object) ? $object : false;
     }
 
     /**
@@ -167,16 +158,14 @@ class DropboxAdapter extends AbstractAdapter
     public function readStream($path)
     {
         $path = $this->applyPathPrefix($path);
-        $response = false;
 
         try {
             $stream = $this->client->download($path);
 
-            $response = compact('stream');
-        } catch (\Exception $e) {
+            return compact('stream');
+        } catch (\Exception $exception) {
+            return false;
         }
-
-        return $response;
     }
 
     /**
@@ -184,20 +173,17 @@ class DropboxAdapter extends AbstractAdapter
      */
     public function listContents($directory = '', $recursive = false)
     {
-        $response = [];
-
         try {
             $location = $this->applyPathPrefix($directory);
 
             $result = $this->client->listFolder($location, $recursive);
 
-            $response = array_map(function ($entry) {
+            return array_map(function ($entry) {
                 return $this->normalizeResponse($entry);
             }, $result['entries']);
         } catch (\Exception $exception) {
+            return false;
         }
-
-        return $response;
     }
 
     /**
@@ -211,7 +197,7 @@ class DropboxAdapter extends AbstractAdapter
             $object = $this->client->getMetadata($path);
 
             return $this->normalizeResponse($object);
-        } catch (\Exception  $e) {
+        } catch (\Exception $exception) {
             return false;
         }
     }
@@ -222,14 +208,6 @@ class DropboxAdapter extends AbstractAdapter
     public function getSize($path)
     {
         return $this->getMetadata($path);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMimetype($path)
-    {
-        return ['mimetype' => MimeType::detectByFilename($path)];
     }
 
     /**
@@ -292,8 +270,7 @@ class DropboxAdapter extends AbstractAdapter
 
             return $this->normalizeResponse($object);
         } catch (\Exception $e) {
+            return false;
         }
-
-        return false;
     }
 }

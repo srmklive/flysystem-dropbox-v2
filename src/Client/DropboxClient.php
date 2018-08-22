@@ -358,6 +358,8 @@ class DropboxClient
      * @param string $fromPath
      * @param string $toPath
      *
+     * @throws \Exception
+     *
      * @return \Psr\Http\Message\ResponseInterface
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-move
