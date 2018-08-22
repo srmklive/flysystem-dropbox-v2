@@ -118,9 +118,9 @@ class DropboxClient
      * @param string $fromPath
      * @param string $toPath
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-copy
      */
@@ -141,9 +141,9 @@ class DropboxClient
      *
      * @param string $path
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-create_folder
      */
@@ -169,9 +169,9 @@ class DropboxClient
      *
      * @param string $path
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-delete
      */
@@ -191,9 +191,9 @@ class DropboxClient
      *
      * @param string $path
      *
-     * @return resource
-     *
      * @throws \Exception
+     *
+     * @return resource
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-download
      */
@@ -219,9 +219,9 @@ class DropboxClient
      *
      * @param string $path
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-get_metadata
      */
@@ -244,9 +244,9 @@ class DropboxClient
      *
      * @param string $path
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-get_temporary_link
      */
@@ -275,9 +275,9 @@ class DropboxClient
      * @param string $format
      * @param string $size
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
     public function getThumbnail($path, $format = 'jpeg', $size = 'w64h64')
     {
@@ -309,9 +309,9 @@ class DropboxClient
      * @param string $path
      * @param bool   $recursive
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
      */
@@ -333,9 +333,9 @@ class DropboxClient
      *
      * @param string $cursor
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder-continue
      */
@@ -385,9 +385,9 @@ class DropboxClient
      * @param string|resource $contents
      * @param string|array    $mode
      *
-     * @return array
-     *
      * @throws \Exception
+     *
+     * @return array
      */
     public function upload($path, $contents, $mode = 'add')
     {
@@ -417,9 +417,9 @@ class DropboxClient
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#users-get_current_account
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function getAccountInfo()
     {
@@ -433,9 +433,9 @@ class DropboxClient
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#auth-token-revoke
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     *
      * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function revokeToken()
     {
