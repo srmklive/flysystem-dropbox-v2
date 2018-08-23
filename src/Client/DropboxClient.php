@@ -465,6 +465,42 @@ class DropboxClient
     }
 
     /**
+     * Perform Dropbox API v2 request.
+     *
+     * @param $endpoint
+     * @param $payload
+     *
+     * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function performApiRequest($endpoint, $payload)
+    {
+        $this->setupRequest($payload);
+        $this->apiEndpoint = $endpoint;
+
+        return $this->doDropboxApiRequest();
+    }
+
+    /**
+     * Perform Dropbox API v2 content request.
+     *
+     * @param $endpoint
+     * @param $payload
+     *
+     * @throws \Exception
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function performContentApiRequest($endpoint, $payload)
+    {
+        $this->setupRequest($payload);
+        $this->apiEndpoint = $endpoint;
+
+        return $this->doDropboxApiContentRequest();
+    }
+
+    /**
      * Perform Dropbox API request.
      *
      * @throws \Exception
