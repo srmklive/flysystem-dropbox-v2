@@ -67,12 +67,18 @@ class DropboxClient
     protected $request;
 
     /**
+     * @var int
+     */
+    protected $maxChunkSize;
+
+    /**
      * DropboxClient constructor.
      *
      * @param string             $token
      * @param \GuzzleHttp\Client $client
+     * @param int                $maxChunkSize
      */
-    public function __construct($token, HttpClient $client = null)
+    public function __construct($token, HttpClient $client = null, $maxChunkSize = self::MAX_CHUNK_SIZE)
     {
         $this->setAccessToken($token);
 
@@ -80,6 +86,8 @@ class DropboxClient
 
         $this->apiUrl = 'https://api.dropboxapi.com/2/';
         $this->apiContentUrl = 'https://content.dropboxapi.com/2/';
+        $this->maxChunkSize = ($maxChunkSize < self::MAX_CHUNK_SIZE ?
+            ($maxChunkSize > 1 ? $maxChunkSize : 1) : self::MAX_CHUNK_SIZE);
     }
 
     /**
