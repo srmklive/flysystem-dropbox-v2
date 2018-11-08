@@ -8,6 +8,7 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
 
 env:
   global:
@@ -35,7 +36,9 @@ matrix:
       env: setup=coveralls coverage=yes
     - php: 7.2
       env: setup=coveralls coverage=yes
+    - php: 7.3
+      env: setup=coveralls coverage=yes      
   allow_failures:
     - php: 5.5
-    - env: setup=coveralls coverage=yes
+    - env: setup=coveralls coverage=yes    
   fast_finish: true
