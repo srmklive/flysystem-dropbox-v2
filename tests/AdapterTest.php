@@ -187,12 +187,12 @@ class AdapterTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_false_when_it_cant_delete_stuff()
+    public function it_returns_true_when_it_cant_delete_stuff()
     {
-        $this->client->delete('something')->willReturn(['.tag' => 'path_lookup']);
+        $this->client->delete('/prefix/something')->willReturn(['.tag' => 'path_lookup']);
 
-        $this->assertFalse($this->dropboxAdapter->delete('something'));
-        $this->assertFalse($this->dropboxAdapter->deleteDir('something'));
+        $this->assertTrue($this->dropboxAdapter->delete('something'));
+        $this->assertTrue($this->dropboxAdapter->deleteDir('something'));
     }
 
     /** @test */

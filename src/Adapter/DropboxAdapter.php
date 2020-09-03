@@ -11,7 +11,9 @@ use Srmklive\Dropbox\ParseResponse;
 
 class DropboxAdapter extends AbstractAdapter
 {
-    use GetMimeType, NotSupportingVisibilityTrait, ParseResponse;
+    use GetMimeType;
+    use NotSupportingVisibilityTrait;
+    use ParseResponse;
 
     /** @var \Srmklive\Dropbox\Client\DropboxClient */
     protected $client;
