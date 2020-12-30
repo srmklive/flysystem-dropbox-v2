@@ -14,9 +14,8 @@ class BadRequest extends Exception
     public function __construct(ResponseInterface $response)
     {
         $body = json_decode($response->getBody(), true);
-        if (null !== $body &&
-            true === isset($body['error_summary']))
-        {
+
+        if (null !== $body && true === isset($body['error_summary'])) {
             parent::__construct($body['error_summary']);
         }
     }
