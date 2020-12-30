@@ -9,6 +9,7 @@ class BadRequest extends Exception
 {
     /**
      * BadRequest constructor.
+     *
      * @param ResponseInterface $response
      */
     public function __construct(ResponseInterface $response)
