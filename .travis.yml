@@ -18,7 +18,7 @@ env:
 
 before_script:
   - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable; fi
-  - if [[ $setup = 'coveralls' ]]; then travis_retry composer require "satooshi/php-coveralls=~0.7" --prefer-dist --no-interaction --dev; fi
+  - if [[ $setup = 'coveralls' ]]; then travis_retry composer require "php-coveralls/php-coveralls" --prefer-dist --no-interaction --dev; fi
 
 script:
   - if [[ $coverage = 'yes' ]]; then ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi
