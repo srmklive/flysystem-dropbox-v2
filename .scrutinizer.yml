@@ -20,7 +20,7 @@ checks:
 build:
     environment:
         php:
-            version: '5.6'
+            version: '7.1'
     tests:
         override:
             -
