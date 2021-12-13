@@ -124,6 +124,7 @@ class AdapterTest extends TestCase
             ['getMetadata'],
             ['getTimestamp'],
             ['getSize'],
+            ['getMimetype'],
             ['has'],
         ];
     }
